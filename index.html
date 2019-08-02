@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<!-- <style type="text/css">
+		table tr {
+			outline: : none !important;
+		}
+	</style> -->
+</head>
+<body>
+<div class="container">
+	<div class="row mb-3">
+		<div class="col text-center pt-5">
+			<h2 class="text-success"><span class="text-danger">e</span>-Receipt</h2>
+			
+		</div>
+	</div>
+     <div class="row">
+		<div class="col">
+			<table class="table table-success">
+				
+				<thead class="bg-success">
+					<tr>
+					<th>s/n</th>
+					<th>Item</th>
+					<th>Price</th>
+					<th>Quantity</th>
+					<th>Total</th>
+					<th></th>
+					<th></th>
+
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr id="id1">
+						<td>1</td>
+						<td><input class="item" type="text" name=""></td>
+						<td><input class="price" type="number" name=""></td>
+						<td><input class='quantity' type="number" name=""></td>
+						<td><input disabled class="total" type="number" name=""></td>
+
+						<td><i class="fa fa-save fdicon"></i></td>
+						<td><i class="fa fa-trash"></td>
+					</tr>
+
+
+				
+					</tbody>
+
+
+					<tfoot>
+
+							<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+
+						<td><i class="fa fa-plus fdicon"></i></td>
+						<td><i class="fa fa-minus"></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td style="border-top: 2px dotted black">Customer's name and signature</td>
+						<td></td>
+						<td></td>
+						<td>Grand Total &#8358; <span id="Gtotal"></span></td>
+
+						<td></td>
+						<td></td>
+					</tr>
+
+
+					<tr>
+						<td></td>
+						<td><button id="prt" class="btn btn-primary" type="button"><i class="fa fa-eye"></i>Print</button></td>
+						<td></td>
+						<td></td>
+						<td></td>
+
+						<td></td>
+						<td></td>
+					</tr>
+					</tfoot>
+				
+
+
+				
+			</table>
+		</div>
+
+		<div id="alertbox" class="text-center table-warning" style="display: none; width: 150px; height: 150px; padding-top: 35px; border: 2px solid red; border-radius: 5px; position: absolute; left: 600px; top: 200px">
+			!Error, fill the available spaces.
+		</div>
+		
+	</div>
+	</div>
+	
+	
+
+
+<script type="text/javascript" src="node_modules/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+<script type="text/javascript">
+	let count = 1;
+	let totalSaver = 0;
+	let idsaver;
+
+	// console.log($('.fd'));
+	$(function(){
+   $(document).on('click', '.fdicon', function () {
+
+   	var a = $(this).parent().parent()[0].id;
+   	let ahash = '#' + a;
+   	// console.log($(ahash + ' input').attr('disabled'));
+   	// console.log($(this).hasClass('fa-save'));
+   	if ($(this).hasClass('fa-save') && $(ahash + ' input').attr('disabled') == undefined) {
+   		$(this).removeClass('fa-save').addClass('fa-pencil');
+   		$('#' + a + ' input').attr('disabled', true);
+
+   	}else if ($(this).hasClass('fa-plus')) {
+   		$(this).addClass('fa-plus');
+   	} 
+
+
+   	else  {
+   		
+   		 $(this).removeClass('fa-pencil').addClass('fa-save');
+   		 $('#' + a + ' input').removeAttr('disabled');
+   		 $('#' + a + ' .total').attr('disabled', true);
+   		
+   	} 
+
+
+  } );
+
+
+   $('.fa-plus').on('click', function () {
+   	let cplace = '#' + $('tbody').children().last()[0].id;
+   	if ($(cplace + ' .item').val() && $(cplace + ' .price').val() && $(cplace + ' .quantity').val()) {
+   	count++;
+   	$('#alertbox').css('display', 'none');
+   	$('table').removeClass('table-danger');
+var trd = `<tr id='id${count}'><td>${count}</td><td><input class='item' type='text' name=''></td><td><input class='price' type='number' name=''></td><td><input class='quantity' type='number' name=''></td><td><input class='total' disabled type='number' name=''></td><td><i class='fa fdicon fa-save'></i></td><td><i class='fa fa-trash'></i></td></tr>`;
+$('tbody').append(trd);
+} else {
+	
+	$('table').addClass('table-danger');
+	$('#alertbox').css('display', 'block');
+}
+});
+
+   $(document).on('click','.fa-trash', function () {
+   
+$(this).parent().parent()[0].remove();
+count--;
+});
+
+    $(document).on('click','#prt', function () {
+   
+window.print();
+});
+
+    $(document).on('click','.fa-minus', function () {
+ 	
+$('tbody').children().remove();
+count = 0;
+  
+
+});
+
+     $(document).on('keyup','.item', function () { 
+     	$('table').removeClass('table-danger');
+	$('#alertbox').css('display', 'none');
+
+});
+
+
+     $(document).on('keyup','.quantity', function () {
+     	
+
+ idsaver = '#' + $(this).parent().parent()[0].id;
+
+     	
+   if ( $(idsaver + ' .price').val() && $(idsaver + ' .item').val()) {
+
+   	$(idsaver + ' .total').val($(idsaver + ' .quantity').val() * $(idsaver + ' .price').val());
+   	totalSaver += $(idsaver + ' .quantity').val() * $(idsaver + ' .price').val();
+   	$(idsaver + ' input').attr('disabled', true);
+   	$('.fdicon').removeClass('fa-save').addClass('fa-pencil');
+
+   	$('#Gtotal').html(totalSaver);
+   
+   }
+});
+
+
+});
+</script>
+
+</body>
+</html>
